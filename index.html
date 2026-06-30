@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>타타대우 스마트 제품 추천 시스템</title>
+    <!-- Tailwind CSS 로드 -->
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 font-sans antialiased text-gray-900 flex justify-center">
+
+    <!-- 모바일 화면 Mockup -->
+    <div class="w-full max-w-md min-h-screen bg-white shadow-2xl flex flex-col justify-between">
+        
+        <!-- 상단 헤더 -->
+        <header class="bg-blue-900 text-white p-4 shadow-md text-center">
+            <h1 class="text-xl font-bold tracking-tight">TATA DAEWOO MOBILITY</h1>
+            <p class="text-xs text-blue-200 mt-1">대형 상용차 맞춤형 비교 제안 시스템 (v2.0)</p>
+        </header>
+
+        <!-- 3단계 내비게이션 탭 -->
+        <nav class="flex bg-gray-200 border-b border-gray-300 text-sm font-medium">
+            <button id="tab-btn-1" class="flex-1 py-3 text-center border-b-2 border-blue-900 text-blue-900" onclick="switchTab(1)">1. 비즈니스 검색</button>
+            <button id="tab-btn-2" class="flex-1 py-3 text-center border-b-2 border-transparent text-gray-500" onclick="switchTab(2)">2. 1:N 맞춤비교</button>
+            <button id="tab-btn-3" class="flex-1 py-3 text-center border-b-2 border-transparent text-gray-500" onclick="switchTab(3)">3. 모바일 견적서</button>
+        </nav>
+
+        <!-- 메인 콘텐츠 영역 -->
+        <main class="flex-1 p-4 overflow-y-auto">
+            
+            <!-- [TAB 1] 용도 선택 화면 -->
+            <section id="tab-content-1" class="space-y-5">
+                <div class="bg-blue-50 border-l-4 border-blue-500 p-3 rounded shadow-sm">
+                    <p class="text-xs text-blue-800 leading-relaxed">
+                        💡 <strong>실가격 데이터 연동 완료:</strong> 현대 엑시언트의 획일화된 고가 패키지에 대응하는 타타대우 맥쎈(MAXEN)의 1:N 맞춤형 포트폴리오 제안 기능입니다.
+                    </p>
+                </div>
+
+                <!-- 질문 1: 구동축 및 용도 -->
+                <div class="space-y-2">
+                    <label class="block font-bold text-sm text-gray-700">구동 방식 및 적재 세그먼트</label>
+                    <select id="user-drive" class="w-full border-2 border-gray-300 rounded-lg p-3 bg-white focus:border-blue-500 text-sm">
+                        <option value="6x4_cargo">대형 6X4 저상 카고 (특장/윙바디 최적화체급)</option>
+                        <option value="6x4_heavy">대형 6X4 고상 카고 (C11 엔진/고하중 수송체급)</option>
+                    </select>
+                </div>
+
+                <!-- 질문 2: 특장 세부 핵심 목적 -->
+                <div class="space-y-2">
+                    <label class="block font-bold text-sm text-gray-700">특장 비즈니스 최우선 가치</label>
+                    <div class="grid grid-cols-1 gap-2">
+                        <label class="flex items-center border border-gray-300 rounded-lg p-3 cursor-pointer bg-white hover:bg-gray-50">
+                            <input type="radio" name="prime-value" value="cost" checked class="mr-3 text-blue-900 focus:ring-blue-900">
+                            <div>
+                                <p class="text-sm font-bold">합리적 경제성 (필요 옵션만 단독 구성)</p>
+                                <p class="text-xs text-gray-500">타사 패키지 강제로 인한 불필요한 과소비 차단</p>
+                            </div>
+                        </label>
+                        <label class="flex items-center border border-gray-300 rounded-lg p-3 cursor-pointer bg-white hover:bg-gray-50">
+                            <input type="radio" name="prime-value" value="special" class="mr-3 text-blue-900 focus:ring-blue-900">
+                            <div>
+                                <p class="text-sm font-bold">특장 장착 적합성 (순정 샤시 및 PTO 최적화)</p>
+                                <p class="text-xs text-gray-500">출고 후 외부 사제 가변축/배선 개조 비용 원천 차단</p>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <button onclick="calculateComparison()" class="w-full bg-blue-900 text-white font-bold p-4 rounded-lg shadow-lg hover:bg-blue-800 transition duration-200 text-sm">
+                    현대차 가격표 대조 및 추천 매칭 →
+                </button>
+            </section>
+
+            <!-- [TAB 2] 1:N 맞춤 비교 화면 -->
+            <section id="tab-content-2" class="space-y-5 hidden">
+                <div class="text-center">
+                    <span class="bg-gray-100 text-gray-800 text-xs font-semibold px-2.5 py-1 rounded-full">실제 정상가 시뮬레이션</span>
+                    <h2 id="match-title" class="text-base font-bold mt-2 text-gray-800">현대 엑시언트 vs 타타대우 유연 대응안</h2>
+                </div>
+
+                <!-- 좌측 격파용: 현대자동차 고정 컴포넌트 -->
+                <div class="border-2 border-red-200 rounded-xl bg-red-50/40 p-4 relative shadow-sm">
+                    <span class="absolute top-3 right-3 bg-red-100 text-red-800 text-xs font-bold px-2 py-0.5 rounded">경쟁사 현대 패키지</span>
+                    <h3 id="hd-model-name" class="font-bold text-sm text-gray-800">현대 엑시언트 카고 13톤 고상</h3>
+                    <p id="hd-model-desc" class="text-xs text-gray-500 mt-0.5">H 430마력 / ZF 12단 자동화 / 패키지 6-3 강제 적용</p>
+                    
+                    <div class="mt-3 flex justify-between items-baseline border-b border-gray-200 pb-2">
+                        <span class="text-xs text-gray-600">공식 가격표 최종가</span>
+                        <span id="hd-model-price" class="text-base font-extrabold text-red-600">188,920,000원</span>
+                    </div>
+                    <p id="hd-warning-text" class="text-xs text-red-700 font-medium mt-2 leading-relaxed">
+                        ⚠️ 현대차는 에어서스펜션/무시동에어컨을 적용하기 위해 원치 않는 고가의 알루미늄 휠, 냉온장고 등이 무조건 묶여 나오는 단일 패키지 구조입니다.
+                    </p>
+                </div>
+
+                <!-- 우측 제안용: 타타대우 1:N 복수 선택지 동적 렌더링 -->
+                <div class="space-y-4" id="td-recommendation-container">
+                    <!-- JavaScript에서 동적으로 타타대우 최적 대안 2종을 꽂아 넣습니다. -->
+                </div>
+            </section>
+
+            <!-- [TAB 3] 모바일 제안서 화면 -->
+            <section id="tab-content-3" class="space-y-5 hidden">
+                <div class="border-2 border-dashed border-blue-300 rounded-2xl p-5 bg-gradient-to-br from-blue-50/50 to-white shadow-md">
+                    <div class="text-center border-b border-gray-300 pb-3">
+                        <h3 class="text-lg font-black text-blue-950 tracking-wider">타타대우모빌리티 제안서</h3>
+                        <p class="text-[10px] text-gray-400 mt-0.5">본 견적은 공식 가격표 기반 시뮬레이션입니다.</p>
+                    </div>
+
+                    <div class="space-y-3 my-4 text-xs">
+                        <div class="flex justify-between">
+                            <span class="text-gray-500">제안 모델:</span>
+                            <span class="font-bold text-gray-800" id="q-model">MAXEN 선택 모델</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-500">기본 샤시가 (수퍼디럭스):</span>
+                            <span class="font-bold text-gray-800" id="q-base-price">0원</span>
+                        </div>
+                        <div class="flex justify-between text-blue-700">
+                            <span>특장 최적화 레이아웃 옵션 비용:</span>
+                            <span class="font-bold" id="q-opt-price">+ 0원</span>
+                        </div>
+                        <div class="flex justify-between text-green-600">
+                            <span>현장 특별 프로모션 지원:</span>
+                            <span class="font-bold">- 3,000,000원</span>
+                        </div>
+                        <hr class="border-gray-200">
+                        <div class="flex justify-between items-baseline pt-1">
+                            <span class="font-bold text-sm text-gray-900">최종 비즈니스 인도 예상가:</span>
+                            <span class="font-black text-lg text-blue-900" id="q-final-price">0원</span>
+                        </div>
+                    </div>
+
+                    <!-- 세일즈 리포트 말풍선 -->
+                    <div id="q-report-box" class="bg-blue-900 text-white p-3 rounded-xl text-xs leading-relaxed shadow-sm">
+                        현대차 대비 강점 요약 보고서 분석 중...
+                    </div>
+                </div>
+
+                <div class="space-y-2">
+                    <button onclick="alert('사내 CRM 및 카카오톡 전송 API 연동 구동 (데모 완료)')" class="w-full bg-yellow-400 text-yellow-900 font-bold p-3 rounded-lg text-center shadow hover:bg-yellow-300 transition text-sm">
+                         카카오톡 세일즈 키트 전송
+                    </button>
+                    <button onclick="switchTab(1)" class="w-full bg-gray-200 text-gray-700 font-medium p-2.5 rounded-lg text-center text-xs hover:bg-gray-300 transition">
+                        다른 차종 조건 검색
+                    </button>
+                </div>
+            </section>
+
+        </main>
+
+        <!-- 하단 브랜드 바 고정 -->
+        <footer class="bg-gray-800 text-white p-2.5 text-center text-xs tracking-widest font-mono">
+            TATA DAEWOO MOBILITY MASTER DATA 연동
+        </footer>
+    </div>
+
+    <!-- 비즈니스 제어 및 마스터 데이터 로직 -->
+    <script>
+        // 전역 선택 임시 저장소
+        let invoiceData = { model: '', base: 0, opt: 0, final: 0, report: '' };
+
+        // 탭 전환 핸들러
+        function switchTab(index) {
+            for (let i = 1; i <= 3; i++) {
+                const content = document.getElementById(`tab-content-${i}`);
+                const btn = document.getElementById(`tab-btn-${i}`);
+                if (i === index) {
+                    content.classList.remove('hidden');
+                    btn.classList.add('border-blue-900', 'text-blue-900');
+                    btn.classList.remove('border-transparent', 'text-gray-500');
+                } else {
+                    content.classList.add('hidden');
+                    btn.classList.remove('border-blue-900', 'text-blue-900');
+                    btn.classList.add('border-transparent', 'text-gray-500');
+                }
+            }
+        }
+
+        // 핵심 연산 함수: 가격표 데이터를 기반으로 1:N 가치 산정
+        function calculateComparison() {
+            const driveType = document.getElementById('user-drive').value;
+            const container = document.getElementById('td-recommendation-container');
+            container.innerHTML = ''; // 초기화
+
+            if (driveType === '6x4_cargo') {
+                // 현대 엑시언트 13톤 고상 카고 (초장축, 패키지 6-3) 데이터 연동
+                document.getElementById('hd-model-name').innerText = "현대 엑시언트 13톤 고상 카고 (초장축)";
+                document.getElementById('hd-model-desc').innerText = "H 430마력 / ZF 12단 자동 / 패키지 6-3 적용 (알루미늄휠, 에어서스, 냉온장고 등 강제 포함)";
+                document.getElementById('hd-model-price').innerText = "188,920,000원";
+                document.getElementById('hd-warning-text').innerText = "⚠️ 현대 엑시언트는 해당 주요 편의옵션을 넣으려면 1,798만 원짜리 패키지 6-3을 무조건 강제 가입해야 하므로 가격 거품이 심합니다.";
+
+                // 타타대우 대안 1 (실속형) - 맥쎈 6X4 저상카고 9.5톤 슬리퍼 표준 (공식 실수가 반영)
+                const cardA = createTdCard(
+                    "대안 ① 맥쎈(MAXEN) 6x4 저상 카고 실속형",
+                    "ED70 엔진(320마력) / ZF 8단 자동변속기(MB5) / 슬리퍼 표준캡 적용",
+                    124750000, 
+                    0, 
+                    "💡 <strong>가성비 폭발:</strong> 현대차의 필수 패키지 독점 횡포를 깨고, 알짜배기 사양만 단독 매칭하여 차량 원가에서만 <strong>약 6,417만 원의 예산을 순수하게 방어</strong>했습니다."
+                );
+                
+                // 타타대우 대안 2 (특장 맞춤형) - 맥쎈 C9 엔진 고마력 및 특장 특화 샤시 레이아웃 연동
+                const cardB = createTdCard(
+                    "대안 ② 맥쎈(MAXEN) 6x4 저상 특화형 (C9엔진)",
+                    "C9 엔진(360마력) / ZF 12단 자동(MH6) / LY1 특장 특화 레이아웃 옵션 적용",
+                    140450000, 
+                    4700000, 
+                    "🚛 <strong>특장 최적화:</strong> 타타대우 공식 가격표 특화 라인업으로, ATS 후처리장치/요소수탱크 전방이동 및 서브냉동기 공간 확보(LY1/BCC 레이아웃 공정)를 순정으로 대응합니다. 출고 후 사제 개조 하자가 제로입니다."
+                );
+
+                container.appendChild(cardA);
+                container.appendChild(cardB);
+
+            } else {
+                // 현대 엑시언트 샤시캡 6x4 고상 (L 540마력, 패키지 4 적용형) 데이터 연동
+                document.getElementById('hd-model-name').innerText = "현대 엑시언트 샤시캡 6x4 고상 (장축)";
+                document.getElementById('hd-model-desc').innerText = "L 540마력 / 프리미엄 트림 / 패키지 4 적용 (에어서스, 디스크, 무시동에어컨 일체형)";
+                document.getElementById('hd-model-price').innerText = "216,410,000원";
+                document.getElementById('hd-warning-text').innerText = "⚠️ 특장 섀시에서도 현대는 패키지 4(3,603만 원)를 묶어 강제 제안하므로, 용도 외에 불필요한 디지털 사이드 미러, IFS 헤드램프 비용까지 고객이 독박을 쓰게 됩니다.";
+
+                // 타타대우 대안 1 - 맥쎈 6X4 대형 카고 C11 고성능 라인업 매칭
+                const cardA = createTdCard(
+                    "대안 ① 맥쎈(MAXEN) 대형 6x4 카고 (C11)",
+                    "C11 엔진(480마력) / ZF 12단 자동(MH2) / 수퍼디럭스 기본 섀시",
+                    152450000,
+                    0,
+                    "💡 <strong>마력당 단가 압승:</strong> 현대 540마력 고가 단일안에 맞서, 실효 주행 환경에 가장 적합한 대형 C11 480마력 솔루션을 제시하여 초기 차량 확보 비용을 <strong>약 6,396만 원 세이브</strong> 시켰습니다."
+                );
+
+                // 대안 2 - 맥쎈 최고 사양 (6x4 C11 로얄 트림 하이돔 구성)
+                const combinedPremiumOptionPrice = 5000000 + 1500000; // 하이돔 + 이스리시트 등
+                const tdPrice = 155050000; 
+                
+                const card2 = document.createElement('div');
+                card2.className = "border-2 border-blue-400 rounded-xl bg-white p-4 relative shadow-md";
+                card2.innerHTML = `
+                    <span class="absolute top-3 right-3 bg-blue-100 text-blue-800 text-xs font-bold px-2 py-0.5 rounded">추천안 B : 풀스펙 럭셔리 대항마</span>
+                    <h4 class="font-bold text-sm text-blue-900">맥쎈(MAXEN) 6x4 대형 로얄 (하이돔)</h4>
+                    <p class="text-[11px] text-gray-500 mt-0.5">C11 480마력 / ZF 자동 / 풀 디지털 미터클러스터 / 무시동 에어컨 순정화</p>
+                    <div class="mt-2 flex justify-between items-baseline">
+                        <span class="text-[11px] text-gray-500">순정 풀옵션 적용가</span>
+                        <span class="text-sm font-bold text-blue-600">${tdPrice.toLocaleString()}원</span>
+                    </div>
+                    <div class="mt-2 bg-blue-50 p-2 rounded text-[11px] text-blue-800 leading-relaxed">
+                        🏆 <strong>풀옵션 비교:</strong> 타타대우의 최상위 '로얄 트림 하이돔' 사양을 적용해도 현대차 패키지 대비 훨씬 저렴하며, 독일 명품 최고급 이스리(ISRI) 에어서스펜션 시트가 순정 적용되어 차주 선호도가 최상입니다.
+                    </div>
+                    <button onclick="saveQuotation('맥쎈 6x4 로얄 하이돔 사양', 155050000, 5000000, '현대 프리미엄 풀패키지 대비 압도적인 럭셔리 편의성(하이돔 거주성 및 이스리 순정 시트)을 갖추고도 총소유비용 장벽을 완벽히 무너뜨린 최고 명품 조합 제안입니다.')" class="w-full mt-2.5 bg-blue-900 text-white font-bold py-2 rounded-lg text-xs">선택 및 견적 확인</button>
+                `;
+                
+                container.appendChild(cardA);
+                container.appendChild(card2);
+            }
+
+            switchTab(2);
+        }
+
+        // 동적 카드 컴포넌트 생성 도우미 함수
+        function createTdCard(title, specs, basePrice, optPrice, reportText) {
+            const card = document.createElement('div');
+            card.className = "border-2 border-green-400 rounded-xl bg-white p-4 relative shadow-md";
+            
+            const totalPrice = basePrice + optPrice;
+            
+            card.innerHTML = `
+                <span class="absolute top-3 right-3 bg-green-100 text-green-800 text-xs font-bold px-2 py-0.5 rounded">타타대우 매칭안</span>
+                <h4 class="font-bold text-sm text-blue-900">${title}</h4>
+                <p class="text-[11px] text-gray-500 mt-0.5">${specs}</p>
+                <div class="mt-2 flex justify-between items-baseline">
+                    <span class="text-[11px] text-gray-500">조합 원가 (부가세 포함)</span>
+                    <span class="text-sm font-bold text-green-600">${totalPrice.toLocaleString()}원</span>
+                </div>
+                <div class="mt-2 bg-green-50 p-2 rounded text-[11px] text-green-800 leading-relaxed">
+                    ${reportText}
+                </div>
+                <button onclick="saveQuotation('${title}', ${basePrice}, ${optPrice}, '${reportText.replace(/['"]/g, "")}')" class="w-full mt-2.5 bg-green-600 text-white font-bold py-2 rounded-lg text-xs">선택 및 견적 확인</button>
+            `;
+            return card;
+        }
+
+        // 견적서 데이터 바인딩 및 저장
+        function saveQuotation(model, base, opt, report) {
+            invoiceData.model = model;
+            invoiceData.base = base;
+            invoiceData.opt = opt;
+            invoiceData.final = (base + opt) - 3000000; // 본사 조건 할인 일괄 300만 원 적용 시뮬레이션
+            invoiceData.report = report;
+
+            document.getElementById('q-model').innerText = model;
+            document.getElementById('q-base-price').innerText = base.toLocaleString() + "원";
+            document.getElementById('q-opt-price').innerText = "+ " + opt.toLocaleString() + "원";
+            document.getElementById('q-final-price').innerText = invoiceData.final.toLocaleString() + "원";
+            document.getElementById('q-report-box').innerHTML = `🎯 <strong>현장 세일즈 톡커 핵심:</strong> ${report}`;
+
+            switchTab(3);
+        }
+    </script>
+</body>
+</html>
